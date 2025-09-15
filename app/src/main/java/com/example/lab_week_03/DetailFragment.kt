@@ -1,75 +1,64 @@
 package com.example.lab_week_03
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
-
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import androidx.fragment.app.Fragment
 
 class DetailFragment : Fragment() {
 
-    private var param1: String? = null
-    private var param2: String? = null
-
-    private val coffeeTitle: TextView?
-        get() = view?.findViewById(R.id.coffee_title)
-    private val coffeeDesc: TextView?
-        get() = view?.findViewById(R.id.coffee_desc)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
-
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // make sure you actually have res/layout/fragment_detail.xml
         return inflater.inflate(R.layout.fragment_detail, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val coffeeId = arguments?.getInt(COFFEE_ID, 0) ?: 0
-        setCoffeeData(coffeeId)
+        setCoffeeData(coffeeId, view)
+
+        // ✅ Back button goes back to ListFragment
+        val backButton = view.findViewById<Button>(R.id.back_button)
+        backButton.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
     }
 
-    fun setCoffeeData(id: Int) {
-        when (id) {
+    private fun setCoffeeData(coffeeId: Int, view: View) {
+        val title = view.findViewById<TextView>(R.id.coffee_title)
+        val desc = view.findViewById<TextView>(R.id.coffee_description)
+
+        when (coffeeId) {
             R.id.affogato -> {
-                coffeeTitle?.text = getString(R.string.affogato_title)
-                coffeeDesc?.text = getString(R.string.affogato_desc)
+                title.text = "Affogato"
+                desc.text = "Espresso poured over vanilla ice cream."
             }
-
             R.id.americano -> {
-                coffeeTitle?.text = getString(R.string.americano_title)
-                coffeeDesc?.text = getString(R.string.americano_desc)
+                title.text = "Americano"
+                desc.text = "Espresso diluted with hot water."
             }
-
             R.id.latte -> {
-                coffeeTitle?.text = getString(R.string.latte_title)
-                coffeeDesc?.text = getString(R.string.latte_desc)
+                title.text = "Latte"
+                desc.text = "Espresso with steamed milk and foam."
+            }
+            R.id.espresso -> {
+                title.text = "Espresso"
+                desc.text = "Strong, concentrated coffee shot."
+            }
+            R.id.cappuccino -> {
+                title.text = "Cappuccino"
+                desc.text = "Espresso with steamed milk and a thick layer of foam."
             }
         }
     }
 
     companion object {
-        private const val COFFEE_ID = "COFFEE_ID"
-        fun newInstance(coffeeId: Int) =
-            DetailFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(COFFEE_ID, coffeeId)
-                }
-            }
+        const val COFFEE_ID = "COFFEE_ID"
     }
-
 }
